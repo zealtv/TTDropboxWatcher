@@ -23,7 +23,6 @@ boolean loading = false;
 
 void setup()
 {
-  
   size( 600, 200 );
   smooth();
   colorMode( HSB, 360, 100, 100, 100 );
@@ -63,7 +62,6 @@ void setup()
     camAlive[i] = false;
   }
 
-  
   now = new Date();
 
   gmtFormat = new SimpleDateFormat( "EEE, d MMM yyyy HH:mm:ss zzz" );
@@ -137,7 +135,6 @@ void draw()
   
   for(int i = 0; i < 4; i++)
   {
-  
     if( camAlive[i] )
     {
 
@@ -153,6 +150,10 @@ void draw()
 
 
       ellipse(0,12, eSize, eSize);
+      
+      fill( 0, 0, 100, 75 );
+      text( i + 1, 0, 10 );
+      
     
       fill( 0, 0, 100 );
       text( localFormat.format( camDates[i] ), 0, -50 );
@@ -163,9 +164,6 @@ void draw()
       textSize(12);
       text( "last activity was\n" + getTimeElapsed( camDates[i] ) + " ago", 0, 70 );
       popStyle();
-
-
-
     }
     else  
     {
@@ -176,16 +174,13 @@ void draw()
       text( "?", 0, 0 ); 
       popStyle();
     }
-
     translate(width/4, 0);
   }
-  
   popMatrix();
-  
 
   calcVals();
 
-
+  //check for new rss
   if( frameCount % 200 == 0 ) 
   {
     if( !loading ) thread( "reloadData" ); 
@@ -279,6 +274,9 @@ void reloadData()
   print(".");
   loading = false;
 }
+
+
+
 
 
 void loadBuffer()
