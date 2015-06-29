@@ -212,7 +212,7 @@ void draw()
     }
       
 
-    returnString += hours + ":" + minute + ":" + second;
+    returnString += nf((int)hours, 2) + ":" + nf((int)minute, 2) + ":" + nf((int)second,2);
     return returnString;
  }
 
@@ -252,8 +252,11 @@ void calcVals()
   now = new Date();
 
   for( int i = 0; i < 4; i++ )
-  {
-    camVals[i] = (int) ( now.getTime() - camDates[i].getTime() )/1000;
+  { 
+    if(camAlive[i])
+    {
+      camVals[i] = (int) ( now.getTime() - camDates[i].getTime() )/1000;
+    }
   }
 }
 
