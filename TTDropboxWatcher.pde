@@ -15,15 +15,19 @@ boolean[] camAlive = new boolean[4];
 Date now;
 DateFormat gmtFormat;
 DateFormat localFormat;
+DateFormat shortLocalFormat;
 DateFormat timeFormat;
+DateFormat leidenFormat;
+DateFormat shortLeidenFormat;
 
 boolean loading = false;
+boolean doLocalTime = true;
 
 
 
 void setup()
 {
-  size( 600, 200 );
+  size( 600, 250 );
   smooth();
   colorMode( HSB, 360, 100, 100, 100 );
 
@@ -67,8 +71,20 @@ void setup()
   gmtFormat = new SimpleDateFormat( "EEE, d MMM yyyy HH:mm:ss zzz" );
   gmtFormat.setTimeZone( TimeZone.getTimeZone("GMT") );
 
-  localFormat = new SimpleDateFormat( "d MMM\nHH:mm:ss zzz" );
+  localFormat = new SimpleDateFormat( "d MMMM, HH:mm:ss zzz" );
   localFormat.setTimeZone( TimeZone.getDefault() );
+  
+  shortLocalFormat = new SimpleDateFormat( "d MMMM\n HH:mm:ss" );
+  shortLocalFormat.setTimeZone( TimeZone.getDefault() );
+  
+  leidenFormat = new SimpleDateFormat( "d MMMM, HH:mm:ss" );
+  shortLeidenFormat = new SimpleDateFormat( "d MMMM\n HH:mm:ss" );  
+  TimeZone tz = TimeZone.getTimeZone("GMT+2");
+  tz.setID("CEST");
+  //leidenFormat = new SimpleDateFormat( "d MMM HH:mm:ss" );
+  leidenFormat.setTimeZone( tz );
+  shortLeidenFormat.setTimeZone( tz );
+
 
   timeFormat = new SimpleDateFormat( "" );
 
@@ -130,8 +146,26 @@ void draw()
   background( 50 );
   textSize( 16 );
   textAlign( CENTER, CENTER );
+
   pushMatrix();
-  translate(width/8,height/2.5);
+  pushStyle();
+  textSize(42);
+  
+  String nowString;
+  
+  if( doLocalTime ) nowString = localFormat.format( now );
+  else nowString = leidenFormat.format( now ) + " CEST";
+  
+  text( nowString, width/2, height/12 );
+  //text( shortLeidenFormat.format( now ) + " CEST", width/2, height - height/10 );
+  popStyle();
+  popMatrix();
+  
+  pushMatrix();
+  translate(width/8,height/2 + 20 );
+  
+
+  
   
   for(int i = 0; i < 4; i++)
   {
@@ -149,21 +183,28 @@ void draw()
       eSize = min(80, eSize);
 
 
-      ellipse(0,12, eSize, eSize);
+      ellipse(0,0, eSize, eSize);
       
-      fill( 0, 0, 100, 75 );
-      text( i + 1, 0, 10 );
+      fill( 0, 0, 100, 100 );
+      text( i + 1, 0, 0 );
       
     
       fill( 0, 0, 100 );
-      text( localFormat.format( camDates[i] ), 0, -50 );
-
-      //format time into 
+      if(doLocalTime)
+      {
+        text( shortLocalFormat.format( camDates[i] ), 0, -height/3.8 );
+      }
+      else
+      {        
+        text( shortLeidenFormat.format( camDates[i] ), 0, -height/3.8 );
+      }
+ 
 
       pushStyle();
       textSize(12);
-      text( "last activity was\n" + getTimeElapsed( camDates[i] ) + " ago", 0, 70 );
+      text( "last activity was\n" + getTimeElapsed( camDates[i] ) + " ago", 0, height/4 );
       popStyle();
+      
     }
     else  
     {
@@ -302,4 +343,9 @@ void loadBuffer()
         println("no last seen data for CAM" + ( j + 1 ) );
       }
     } 
+}
+
+
+void mouseClicked() {
+  doLocalTime = !doLocalTime;
 }
